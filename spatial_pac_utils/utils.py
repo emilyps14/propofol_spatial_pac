@@ -246,6 +246,53 @@ def plot_topos(axes,toplot,clims,pos,reject=None,contours=[0],cmap='seismic',
     return im
 
 
+def plot_surf(stc,clim,colormap,time_label,surf,transparent,offscreen,subjects_dir=None,
+               blnMaskUnknown=False):
+    if offscreen:
+        # create offscreen figure so that I can use the computer while it's saving
+        from surfer.viz import _make_viewer
+        figure = _make_viewer(None, 1, 2, stc.subject, (800,1600), True)[0][0]
+    else:
+        figure=None
+
+    # This raises a vtk error that has something to do with smoothing_steps=None
+    # (any time smoothing steps is big enough to cover all of the vertices)
+    # but it still displays the correct figure.
+    # can't catch the error since it's in c, printing to console.
+    brain = stc.plot(surface=surf, hemi='split', views='medial',
+                       clim=clim, colormap=colormap, transparent=transparent,time_unit='s',
+                       time_label=time_label,size=[1600,800],figure=figure,smoothing_steps=None,
+                     subjects_dir=subjects_dir)
+
+    if blnMaskUnknown:
+        subjects_dir = mne.utils.get_subjects_dir(subjects_dir=subjects_dir,
+                                        raise_error=True)
+
+        for hemi in ['lh','rh']:
+            aparc_file = op.join(subjects_dir,stc.subject,"label",'{}.aparc.annot'.format(hemi))
+            labels,_,names = fs.read_annot(aparc_file)
+            masked_region_inds = np.arange(len(names))[np.in1d(names,['corpuscallosum','unknown'])]
+            masked_region_inds = np.append(masked_region_inds,-1) # unlabeled
+            mask = np.in1d(labels,masked_region_inds)
+
+            brain.add_data(mask,hemi=hemi,min=0,max=1,thresh=0.5,colormap='gray',colorbar=False,alpha=0.99)
+
+    return brain
+
+
+def save_surf(brain,saveflag,outputpath,suffix):
+    fname = op.join(outputpath, saveflag + '_medial' + suffix)
+    brain.show_view('medial',row=0,col=1)
+    brain.show_view('medial',row=0,col=0)
+    brain.save_image(fname + '.png')
+
+    brain.show_view('lateral',row=0,col=1)
+    brain.show_view('lateral',row=0,col=0)
+
+    fname = op.join(outputpath, saveflag + '_lateral' + suffix)
+    brain.save_image(fname + '.png')
+
+
 def remove_box(ax):
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
