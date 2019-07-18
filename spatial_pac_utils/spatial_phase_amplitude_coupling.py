@@ -2,6 +2,7 @@
 from spatial_pac_utils.mne_pipeline import get_epochs_filepfx, get_stc_filepfx, \
     get_times_for_epochs
 from spatial_pac_utils import utils
+from spatial_pac_utils.spatialPAC_plotting import plot_surf, save_surf
 import logging
 import mne
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -13,7 +14,6 @@ from scipy.signal import hilbert
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from mpl_toolkits.mplot3d import Axes3D
-from src_loc_modules import plot_sources
 from mne.externals.h5io import read_hdf5, write_hdf5
 from mne.viz import iter_topography
 import warnings
@@ -615,7 +615,7 @@ class SourceSpacePAC(SpatialPAC):
                                           vertices=self.vertices,
                                           tmin=0, tstep=1,
                                           subject=self.subject)
-            brain = plot_sources.plot_surf(stc_corr, {'kind': 'value',
+            brain = plot_surf(stc_corr, {'kind': 'value',
                                                       'lims': ctrl_pts},
                                            'seismic', label_func,
                                            'semi-inflated', False,
@@ -634,7 +634,7 @@ class SourceSpacePAC(SpatialPAC):
                                           vertices=self.vertices,
                                           tmin=0, tstep=1,
                                           subject=self.subject)
-            brain = plot_sources.plot_surf(stc_corr, {'kind': 'value',
+            brain = plot_surf(stc_corr, {'kind': 'value',
                                                       'lims': ctrl_pts},
                                            cm, label_func,
                                            'semi-inflated', False,
@@ -644,7 +644,7 @@ class SourceSpacePAC(SpatialPAC):
         if blnsave:
             for j,(t,level) in enumerate(zip(stc_corr.times,self.eventnames)):
                 brain.set_time(t)
-                plot_sources.save_surf(brain, fname, self.figures_output_path,
+                save_surf(brain, fname, self.figures_output_path,
                                    '_{}{}'.format(j, level))
             brain.close()
 
@@ -700,7 +700,7 @@ class SourceSpacePAC(SpatialPAC):
                                           vertices=self.vertices,
                                           tmin=0, tstep=1,
                                           subject=self.subject)
-            brain = plot_sources.plot_surf(stc_proj, {'kind': 'value',
+            brain = plot_surf(stc_proj, {'kind': 'value',
                                                       'lims': ctrl_pts},
                                            'seismic', label_func,
                                            'semi-inflated', False,
@@ -711,7 +711,7 @@ class SourceSpacePAC(SpatialPAC):
                 for j,(t,level) in enumerate(zip(stc_proj.times,self.eventnames)):
                     fname = self.get_savename() + saveflag.format(i)
                     brain.set_time(t)
-                    plot_sources.save_surf(brain, fname, self.figures_output_path,
+                    save_surf(brain, fname, self.figures_output_path,
                                        '_{}{}'.format(j, level))
                 brain.close()
 
