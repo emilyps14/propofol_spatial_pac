@@ -1,14 +1,12 @@
-language: c
+language: python
+python: 3.7
 os: linux
 dist: xenial
-sudo: false
-cache: 
-    apt: true
-    pip: true
+email: false
 env:
-    global: PYTHON_VERSION=3.7 DISPLAY=:99.0 MNE_LOGGING_LEVEL=warning 
-            TRAVIS_PYTHON_VERSION=3.7 CONDA_VERSION=">=4.3.27" CONDA_ENVIRONMENT="environment.yml"
-            OPENBLAS_NUM_THREADS=1
+    global: DISPLAY=:99.0 MNE_LOGGING_LEVEL=warning
+            TRAVIS_PYTHON_VERSION=3.7 CONDA_VERSION=">=4.3.27"
+            CONDA_ENVIRONMENT="environment.yml"
 install:
     - /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -screen 0 1400x900x24 -ac +extension GLX +render -noreset;
     - git clone --depth 1 git://github.com/astropy/ci-helpers.git

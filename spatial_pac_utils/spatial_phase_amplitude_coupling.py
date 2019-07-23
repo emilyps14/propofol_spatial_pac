@@ -8,13 +8,10 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import os.path as op
 from os import makedirs
 import numpy as np
-from scipy.io import loadmat
 from scipy.signal import hilbert
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
-from mpl_toolkits.mplot3d import Axes3D
 from mne.externals.h5io import read_hdf5, write_hdf5
-from mne.viz import iter_topography
 import warnings
 
 log = logging.getLogger(__name__)
@@ -1978,7 +1975,7 @@ def load_sensor_data(subject,subjects_dir,newFs,
 ## Subject pipeline
 def run_pipeline(subjects_dir,subjects,blnsave,
                  blnSourceSpace,blnOffscreen,blnAcrossFrequencies,blnSession,
-                 swtPACmetric='corr',events_dir=None):
+                 swtPACmetric='corr',events_dir=None,neighbor_dict=None):
     """Run spatial PAC pipeline
 
     Parameters
@@ -2102,7 +2099,8 @@ def run_pipeline(subjects_dir,subjects,blnsave,
                                       amp_bands, blnPhaseHilbert, blnAmpHilbert, Nbootstrap, swtPACmetric,
                                       swtBootstrapMethod, event_filename,
                                       figures_output_path, blnSession,
-                                      events_dir=events_dir)
+                                      events_dir=events_dir,
+                                      neighbor_dict=neighbor_dict)
 
         pac.run_computation(blnsave)
         if blnAcrossFrequencies and not blnSourceSpace:

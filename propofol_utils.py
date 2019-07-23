@@ -1,11 +1,9 @@
 from scipy.io import loadmat
 import os.path as op
 import numpy as np
-import matplotlib.pyplot as plt
-from spatial_pac_utils import utils
 
 def get_LOC_and_ROC(subject,subjects_dir):
-    l = loadmat(op.join(subjects_dir,'eeganes_aligntimes.mat'), squeeze_me=False)
+    l = loadmat(op.join(subjects_dir,'input','eeganes_aligntimes.mat'), squeeze_me=False)
     subidx = dict(eeganes02=0,
                   eeganes03=1,
                   eeganes04=2,
@@ -56,9 +54,8 @@ def load_pr_resp(subject,subjects_dir):
     return pr_resp_T,pr_resp_verbal,pr_resp_clicks
 
 
-def propofol_paths(subject,spacing_string):
+def propofol_paths(subjects_dir,subject,spacing_string):
 
-    subjects_dir=op.realpath('..')
     input_dir = op.join(subjects_dir,subject,'input')
 
     src_fname = f'{subject}{spacing_string}p-src.fif'
@@ -95,7 +92,8 @@ def propofol_paths(subject,spacing_string):
     raw_fname = f'{subject}-crop-0-None-raw.fif'
     rawfile = op.join(input_dir, raw_fname)
 
-    badchannelfile_eeg = op.join(subjects_dir,'badchannelmat.mat')
+    badchannelfile_eeg = op.join(subjects_dir,'input','badchannelmat.mat')
+    neighborfile = op.join(subjects_dir,'input','channelneighbors.mat')
 
     paths_dict = {}
     paths_dict['subjects_dir'] = subjects_dir
@@ -107,6 +105,7 @@ def propofol_paths(subject,spacing_string):
     paths_dict['badchannels_eeg'] = badchannelfile_eeg
     paths_dict['badchannels_meg'] = None
     paths_dict['badchannels_addPfx'] = True
+    paths_dict['neighborfile'] = neighborfile
 
     return paths_dict
 

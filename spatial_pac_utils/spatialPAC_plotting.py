@@ -1,16 +1,13 @@
 from spatial_pac_utils.spatial_phase_amplitude_coupling \
     import pac_savename,read_SensorSpacePAC,prepare_roi_summary
 from spatial_pac_utils.utils \
-    import load_neighbors_mat,get_laplacian_referenced_data_epochs,\
-    add_colorbar,plot_gram,remove_box,plot_topos,plot_surf,save_surf
-from spatial_pac_utils.mne_pipeline import get_epochs_filepfx
+    import add_colorbar,plot_gram,remove_box,plot_topos,plot_surf,save_surf
 import os.path as op
 import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize
 from matplotlib.cm import ScalarMappable
 from matplotlib import gridspec
 import mne
-from nibabel import freesurfer as fs
 import numpy as np
 
 

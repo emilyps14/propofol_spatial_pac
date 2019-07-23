@@ -3,6 +3,7 @@
 from spatial_pac_utils import mne_pipeline
 from spatial_pac_utils import spatial_phase_amplitude_coupling as spac
 from spatial_pac_utils.spatialPAC_plotting import plot_single_subject_summary
+from spatial_pac_utils.utils import load_neighbors_mat
 from propofol_utils import propofol_paths,get_LOC_and_ROC,load_bhvr,load_pr_resp
 import os.path as op
 from os import makedirs
@@ -21,7 +22,9 @@ depth = None
 event_filename = 'event_times_level.mat'
 blnSaveInv = False
 
-paths_dict = propofol_paths(subject,spacing_string)
+subjects_dir = op.realpath('..')
+
+paths_dict = propofol_paths(subjects_dir,subject,spacing_string)
 
 #%%
 ## Set up frequency bands
@@ -41,7 +44,7 @@ for blnSession in [False,True]:
     for band in bands:
         if blnSession:
             # Use event level observation covariance
-            cov_folder = op.join(paths_dict['subjects_dir'],
+            cov_folder = op.join(subjects_dir,
                                  subject, 'sourceloc_preproc')
             fpfx = mne_pipeline.get_epochs_filepfx(cov_folder,subject,
                                                    event_filename,
@@ -88,49 +91,56 @@ for blnSession in [False,True]:
             blnRunSourceLoc=not blnSession)
 
 #%%
+# Load neighbor dict
+_, neighbor_dict = load_neighbors_mat(paths_dict['neighborfile'])
+
+#%%
 ## Run sensor-space PAC pipeline by event
 
 # for topoplots (8-16 Hz)
 # saves figures in <subjects_dir>/<subject>/Figures sensor space/PAC_0.1-4_8-16/corr
-spac.run_pipeline(paths_dict['subjects_dir'],[subject],blnsave=True,
+spac.run_pipeline(subjects_dir,[subject],blnsave=True,
                   blnSourceSpace=False,blnOffscreen=False,
                   blnAcrossFrequencies=False,blnSession=False,
-                  events_dir=paths_dict['events_dir'])
+                  events_dir=paths_dict['events_dir'],
+                  neighbor_dict=neighbor_dict)
 
 # for non-central PCA (across frequencies)
 # saves figures in <subjects_dir>/<subject>/PAC_across_frequencies_0.1-4_2.0Hz/corr
-spac.run_pipeline(paths_dict['subjects_dir'],[subject],blnsave=True,
+spac.run_pipeline(subjects_dir,[subject],blnsave=True,
                   blnSourceSpace=False,blnOffscreen=False,
                   blnAcrossFrequencies=True,blnSession=False,
-                  events_dir=paths_dict['events_dir'])
+                  events_dir=paths_dict['events_dir'],
+                  neighbor_dict=neighbor_dict)
 
 #%%
 ## Run sensor-space PAC pipeline over the session (for coherograms)
 # saves figures in <subjects_dir>/<subject>/PAC_session_0.1-4_2.0Hz/corr
-spac.run_pipeline(paths_dict['subjects_dir'],[subject],blnsave=True,
+spac.run_pipeline(subjects_dir,[subject],blnsave=True,
                   blnSourceSpace=False,blnOffscreen=False,
                   blnAcrossFrequencies=True,blnSession=True,
-                  events_dir=None)
+                  events_dir=None,
+                  neighbor_dict=neighbor_dict)
 
 
 #%%
 ## Create Figure 1
-savepath = op.join(paths_dict['subjects_dir'],'Manuscript_Figures')
+savepath = op.join(subjects_dir,'Manuscript_Figures')
 if not op.exists(savepath):
     makedirs(savepath)
 
-propofol_dose, propofol_t, _, _, _ = load_bhvr(subject,paths_dict['subjects_dir'])
-key_times = get_LOC_and_ROC(subject,paths_dict['subjects_dir'])
-pr_resp_T,pr_resp_verbal,pr_resp_clicks = load_pr_resp(subject,paths_dict['subjects_dir'])
+propofol_dose, propofol_t, _, _, _ = load_bhvr(subject,subjects_dir)
+key_times = get_LOC_and_ROC(subject,subjects_dir)
+pr_resp_T,pr_resp_verbal,pr_resp_clicks = load_pr_resp(subject,subjects_dir)
 
-plot_single_subject_summary(paths_dict['subjects_dir'], subject,
+plot_single_subject_summary(subjects_dir, subject,
                               propofol_t, propofol_dose, key_times,
                               pr_resp_T, pr_resp_verbal, pr_resp_clicks,
                               savepath)
 
 #%%
 ## Run source-space PAC pipeline by event (for projection analysis)
-spac.run_pipeline(paths_dict['subjects_dir'],[subject],blnsave=True,
+spac.run_pipeline(subjects_dir,[subject],blnsave=True,
                   blnSourceSpace=True,blnOffscreen=False,
                   blnAcrossFrequencies=True,blnSession=False,
                   events_dir=paths_dict['events_dir'])

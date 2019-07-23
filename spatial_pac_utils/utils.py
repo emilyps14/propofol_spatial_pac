@@ -6,6 +6,7 @@ import logging
 import warnings
 import subprocess
 from time import strftime
+from nibabel import freesurfer as fs
 
 log = logging.getLogger(__name__)
 
