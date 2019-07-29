@@ -59,7 +59,7 @@ for blnSession in [False,True]:
             obs_cov_filepath = None
             event_filename_in = event_filename
 
-        if band==lf_band:
+        if band==lf_band or band==topoplot_band:
             l_trans_bandwidth = 'auto'
             h_trans_bandwidth = 0.5
         else:

@@ -13,7 +13,6 @@ event_suffix = '_sedation'
 subjects = ['eeganes02','eeganes03','eeganes04','eeganes05','eeganes07',
             'eeganes08','eeganes09','eeganes10','eeganes13','eeganes15']
 subjects_dir = op.realpath('..')
-blnsave = True
 
 swtPACmetric = 'corr'
 blnPhaseHilbert = False
