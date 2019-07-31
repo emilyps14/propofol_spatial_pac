@@ -1,3 +1,4 @@
+# Author: Emily P. Stephen <emilyps14@gmail.com>
 
 from spatial_pac_utils.mne_pipeline import get_epochs_filepfx, get_stc_filepfx, \
     get_times_for_epochs

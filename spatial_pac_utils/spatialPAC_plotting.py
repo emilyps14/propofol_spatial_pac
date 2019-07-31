@@ -1,3 +1,5 @@
+# Author: Emily P. Stephen <emilyps14@gmail.com>
+
 from spatial_pac_utils.spatial_phase_amplitude_coupling \
     import pac_savename,read_SensorSpacePAC,prepare_roi_summary
 from spatial_pac_utils.utils \
@@ -206,6 +208,28 @@ def plot_single_subject_summary(subjects_dir, subject,
 
 
 def plot_frequency_profiles(freq_profiles,freqs,savepath=None):
+    '''
+    Plot the first three frequency profiles and the percent of the total
+    energy captured in each
+
+    See Figure 2 in Stephen et al 2019
+
+    Parameters
+    ----------
+    freq_profiles : dict
+        The frequency profiles (output from spatial_phase_amplitude_coupling.compute_frequency_profiles
+        Having at least items:
+        'S' -> ndarray, (Nf,), singular values
+        'U' -> ndarray, (Nf,Nf), frequency profiles (in columns)
+    freqs : ndarray, (Nf,)
+        The frequency axis (centers)
+    savepath : basestring | None
+        The path to save the figure (or None for no save)
+
+    Returns
+    -------
+
+    '''
     S = freq_profiles['S']
     pct_energy = S**2/(S**2).sum() * 100
     U = freq_profiles['U']
@@ -249,16 +273,28 @@ def plot_projection_surfaces(projections, eventnames, vertices,
                              savename, Nprojs=3,
                              blnOffscreen=False,savepath=None):
     '''
+    Plot the source space projections of the frequency profiles
 
-    :param projections: (components,levels,sources)
-    :param eventnames:
-    :param vertices:
-    :param subject:
+    See Figure 3 in Stephen et al 2019
+
+    :param projections: ndarray, (components,levels,sources)
+        The projections to plot, e.g. from spatial_phase_amplitude_coupling.compute_source_space_projections
+    :param eventnames: list of basestring
+        List of names of the levels
+    :param vertices: list of numeric
+        the vertices corresponding to the sources in projections
+    :param subject: basestr
+        The subject ID
     :param subjects_dir:
+        The subject directory
     :param savename:
-    :param Nprojs:
-    :param blnOffscreen:
-    :param savepath:
+        The name of the file to save to
+    :param Nprojs: int
+        The number of projections to plot
+    :param blnOffscreen: bool
+        Whether to plot the surfaces offscreen
+    :param savepath: basestr | None
+        The path to save to (or None for no save)
     :return:
     '''
     def label_func(f):
@@ -412,6 +448,33 @@ def plot_proj_roi_summary(roi_proj_all,CIs,eventnames,roilabels,yl_factor=1,
 
 def plot_lobe_projection_summary(pacs,freq_profiles,eventnames,stats_alpha=0.05,
                                  Nprojs=3,savepath=None):
+    '''
+    Plot a bar graph and a scatter plot of the breakdown of the projections by
+    lobe, across subjects
+
+    See Figure 4 in Stephen et al 2019
+
+    Parameters
+    ----------
+    pacs : list of spatial_phase_amplitude_coupling.SourceSpacePAC
+        The PAC objects for all subjects
+    freq_profiles : dict
+        The frequency profiles (output from spatial_phase_amplitude_coupling.compute_frequency_profiles)
+        Having at least item:
+        'U' -> ndarray, (Nf,Nf), frequency profiles (in columns)
+    eventnames : list of basestring
+        List of names of the levels
+    stats_alpha : numeric
+        The alpha level for a bootstrap confidence interval across subjects
+    Nprojs : int
+        The number of projections (there will be one plot for each projection)
+    savepath : basestring | None
+        The path to save to (or None for no save)
+
+    Returns
+    -------
+
+    '''
     Nlevels = len(eventnames)
     Nsubjects = len(pacs)
 

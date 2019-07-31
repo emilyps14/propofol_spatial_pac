@@ -1,3 +1,5 @@
+# Author: Emily P. Stephen <emilyps14@gmail.com>
+
 #%%
 ## Imports and Settings
 from spatial_pac_utils import mne_pipeline

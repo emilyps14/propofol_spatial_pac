@@ -1,3 +1,5 @@
+# Author: Emily P. Stephen <emilyps14@gmail.com>
+
 import os.path as op
 import mne
 import numpy as np
