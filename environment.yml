@@ -32,7 +32,7 @@ dependencies:
 - traitsui>=6
 - testpath<0.4
 - pip:
-  - mne
+  - mne==0.16.2
   - vtk
   - pyvista>=0.20.3
   - mayavi
